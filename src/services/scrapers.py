@@ -1,23 +1,23 @@
 from selenium import webdriver
-from selenium.webdriver.edge.service import Service as EdgeService
-from selenium.webdriver.edge.options import Options as EdgeOptions
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 def scrape_bing_sync(bing_url: str) -> str:
-    edge_options = EdgeOptions()
-    edge_options.add_argument("--headless")  # run without opening window
-    edge_options.add_argument("--no-sandbox")
-    edge_options.add_argument("--disable-dev-shm-usage")
-    # edge_options.add_argument("--disable-gpu")
-    # edge_options.add_argument("--disable-blink-features=AutomationControlled")
-    # edge_options.add_argument("--blink-settings=imagesEnabled=false")
+    options = Options()
+    options.add_argument("--headless")  # run without opening window
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    # options.add_argument("--disable-gpu")
+    # options.add_argument("--disable-blink-features=AutomationControlled")
+    # options.add_argument("--blink-settings=imagesEnabled=false")
 
-    service = EdgeService(r"C:\Drivers\msedgedriver.exe")
-
-    driver = webdriver.Edge(service=service, options=edge_options)
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=options)
       
     # driver.get(bing_url)
 
@@ -40,7 +40,7 @@ def scrape_bing_sync(bing_url: str) -> str:
         search_box.send_keys(Keys.RETURN)
 
         # ✅ 3. Wait for result title to appear
-        film_title_element = WebDriverWait(driver, 20).until(
+        film_title_element = WebDriverWait(driver, 30).until(
          EC.presence_of_element_located((By.CSS_SELECTOR, ".semi-ew-wrapper .semi-ew h1"))
         )
 
