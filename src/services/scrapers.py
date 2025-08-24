@@ -16,7 +16,10 @@ def scrape_bing_sync(bing_url: str) -> str:
     # options.add_argument("--disable-blink-features=AutomationControlled")
     # options.add_argument("--blink-settings=imagesEnabled=false")
 
-    service = Service(ChromeDriverManager().install())
+    service = Service("/usr/bin/chromedriver")
+    options.binary_location = "/usr/bin/google-chrome"
+    
+    # service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
       
     # driver.get(bing_url)
