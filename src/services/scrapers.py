@@ -25,21 +25,26 @@ def scrape_bing_sync(bing_url: str) -> str:
     
     # Try to find Chrome binary in common locations
     chrome_paths = [
+        os.environ.get('CHROME_BIN'),  # Check environment variable first
         "/usr/bin/google-chrome",
         "/usr/bin/google-chrome-stable",
         "/usr/bin/chromium-browser",
         "/usr/bin/chromium",
-        "/opt/render/project/.chrome/chrome"  # Render-specific path
+        "/opt/render/project/.chrome/chrome",  # Render-specific path
+        shutil.which("google-chrome"),
+        shutil.which("google-chrome-stable"),
+        shutil.which("chromium")
     ]
     
     chrome_binary = None
     for path in chrome_paths:
-        if os.path.exists(path):
+        if path and os.path.exists(path):
             chrome_binary = path
             break
     
     if chrome_binary:
         options.binary_location = chrome_binary
+        print(f"Using Chrome binary: {chrome_binary}")
     
     driver = None
     film_title = None
@@ -57,6 +62,7 @@ def scrape_bing_sync(bing_url: str) -> str:
             
             # Method 2: Try system chromedriver paths
             chromedriver_paths = [
+                os.environ.get('CHROMEDRIVER_PATH'),  # Check environment variable
                 "/usr/bin/chromedriver",
                 "/usr/local/bin/chromedriver",
                 shutil.which("chromedriver")
@@ -67,6 +73,7 @@ def scrape_bing_sync(bing_url: str) -> str:
                     try:
                         service = Service(chromedriver_path)
                         driver = webdriver.Chrome(service=service, options=options)
+                        print(f"Using ChromeDriver: {chromedriver_path}")
                         break
                     except Exception as e2:
                         print(f"Failed with {chromedriver_path}: {e2}")
